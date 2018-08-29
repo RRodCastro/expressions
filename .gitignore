@@ -1,0 +1,5 @@
+/videos-to-frames/frames
+/frames-to-landmarks/data.csv
+/frames-to-landmarks/shape_predictor_68_face_landmarks.dat
+videos-to-frames/notes.txt
+frames-to-landmarks/__pycache__/NumpyEncoder.cpython-36.pyc
