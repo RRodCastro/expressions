@@ -1,0 +1,10 @@
+fileName$frame-
+rigth_eyebrown_eye_distance-(40 vs 22) (20, 21 vs 38 y 39)
+left_eyebrown_eye_distance- (23-43) ( 24, 25 vs 44, 45)
+lips_width- (55 vs 49)
+lips_height- (51, 53 vs 59, 57)
+inner_mouth - (62, 63, 64 vs 68, 67, 66)
+sex - (0 male, 1 female)
+salida - (0 lie, 1 truth)
+
+unit - pupilar distance 
