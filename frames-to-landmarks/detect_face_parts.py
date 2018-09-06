@@ -3,6 +3,7 @@
 
 # import the necessary packages
 from imutils import face_utils
+from scipy.spatial import distance as dist
 import numpy as np
 import argparse
 import imutils
@@ -24,18 +25,12 @@ else:
 
 
 def getLandmarks(facial_landmarks, file):
-    print(file)
     mouth = facial_landmarks[LANDMARKS[0]]
     right_eyebrow = facial_landmarks[LANDMARKS[1]]
     left_eyebrow = facial_landmarks[LANDMARKS[2]]
     right_eye = facial_landmarks[LANDMARKS[3]]
     left_eye = facial_landmarks[LANDMARKS[4]]
 
-    # mouth = np.array(ast.literal_eval(mouth))
-    # right_eyebrow = np.array(ast.literal_eval(right_eyebrow))
-    # left_eyebrow = np.array(ast.literal_eval(left_eyebrow))
-    # right_eye = np.array(ast.literal_eval(right_eye))
-    # left_eye = np.array(ast.literal_eval(left_eye))
     center_rigth_eye = (
         right_eye[1][0] + ((right_eye[2][0] - right_eye[1][0]) / 2))
 
@@ -43,23 +38,26 @@ def getLandmarks(facial_landmarks, file):
                        ((left_eye[2][0] - left_eye[1][0])/2))
     unit = (center_left_eye - center_rigth_eye) / 64
 
-    lips_width = abs(mouth[6][0] - mouth[0][0])
-    lips_height = (abs(mouth[2][1] - mouth[10][1]) +
-                   abs(mouth[4][1] - mouth[8][1]))/2
+    lips_width = dist.euclidean(mouth[6], mouth[0])
 
-    inner_mouth = (abs(mouth[19][1] - mouth[13][1]) + abs(mouth[18]
-                                                          [1] - mouth[14][1]) + abs(mouth[17][1] - mouth[15][1]))/3
+    lips_height = (dist.euclidean(mouth[2], mouth[10]) +
+                   dist.euclidean(mouth[4], mouth[8]))/2
 
-    rigth_eyebrown_eye_distance = abs(
-        right_eye[3][1] - right_eyebrow[4][1])
+    inner_mouth = (dist.euclidean(mouth[19], mouth[13])
+                   + dist.euclidean(mouth[17], mouth[15]))/2
+
     left_eyebrown_eye_distance = abs(left_eye[0][1] - left_eyebrow[0][1])
+    
+    print(right_eye[1], right_eyebrow[2])
 
-    data.write(fileName + '$' + str(file) + '-' + str(rigth_eyebrown_eye_distance * unit) + '-' + str(left_eyebrown_eye_distance *
-                                                                                                      unit) + '-' + str(lips_width * unit) + '-' + str(lips_height * unit) + '-' + str(inner_mouth * unit) + '-' + geneder + '-' + str(truth) + '\n')
+    sleep(20)
+
+    # data.write(fileName + '$' + str(file) + '-' + str(rigth_eyebrown_eye_distance * unit) + '-' + str(left_eyebrown_eye_distance *
+                                                                                                    #   unit) + '-' + str(lips_width * unit) + '-' + str(lips_height * unit) + '-' + str(inner_mouth * unit) + '-' + geneder + '-' + str(truth) + '\n')
 
 
-dirPath = "../videos-to-frames/%s" % fileName
-
+dirPath = "../videos-to-frames/frames/%s" % fileName
+dirPath = "./output"
 if(os.path.exists(dirPath)):
     print(" exists ...")
     data = open("data.csv", "a")
@@ -91,11 +89,15 @@ for file in range(len(files)):
 
         # loop over the face parts individually
         # loop over dict ('lamdnarkname', (x,y))
+        clone = image.copy()
         facial_landmarks = {}
         for (name, (i, j)) in face_utils.FACIAL_LANDMARKS_IDXS.items():
 
             if name in LANDMARKS:
+                for (x, y) in shape[i:j]:
+                    cv2.circle(clone, (x, y), 1, (0, 0, 255), -1)
                 facial_landmarks[name] = shape[i:j]
 
+        # cv2.imwrite('./output/'+str(file)+".jpg", clone)
         getLandmarks(facial_landmarks, file)
 data.close()
